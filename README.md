@@ -15,4 +15,4 @@ Installation steps:
 
 5. Press CTRL-X to exit and then press Y to accept the save.
 
-6. Restart your Pi-Top
+6. Restart your Pi-Top.
