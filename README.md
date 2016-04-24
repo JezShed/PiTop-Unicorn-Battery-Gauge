@@ -9,9 +9,9 @@ Installation steps:
 
 2. Copy 'bat.py' file to a suitable location, such as '/home/pi/Pimoroni/unicornhat'.
  
-3. To make sure the program starts everytime the destop appears, open a console and type "sudo nano /etc/profile".
+3. To make sure the program starts everytime the desktop appears, open a console and type "sudo nano /etc/profile".
 
-4. Scroll to the bottom of the file and add the line "sudo python3 /home/pi/Pimoroni/unicornhat/".
+4. Scroll to the bottom of the file and add the line "sudo python3 /home/pi/Pimoroni/unicornhat/bat.py &".
 
 5. Press CTRL-X to exit and then press Y to accept the save.
 
