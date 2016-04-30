@@ -29,7 +29,7 @@ unicornhat.brightness(0.5) # Globalunicorn brightness
 drawbattery()       # Draw the battery
 unicornhat.show()
 time.sleep(0.5)
-bat=0               # Default is an empty battery if no response obtained from pt-battery
+bat=100             # Default is an empty battery if no response obtained from pt-battery
 startanim=1         # Start-up anim only on the first run
 while True:
     # Issue 'pt-battery' command and capture response
@@ -37,6 +37,7 @@ while True:
     answer, err = p.communicate()
 
     # Now search the returned string for the capacity figure
+    print(answer)
     str1=str(answer)
     str2="Capacity"
     position=str1.find(str2)+9
@@ -90,16 +91,29 @@ while True:
         unicornhat.set_pixel(6,6-y,r,g,b)
         
     startanim=0
-    # Display little "C" symbol if we are charging
+    # Display little "+" symbol if we are charging
     if str1.find("Charging")>0:
         chargesymbol=255
     else:
         chargesymbol=0
-    unicornhat.set_pixel(0,5,chargesymbol,0,chargesymbol)
-    unicornhat.set_pixel(0,6,chargesymbol,0,chargesymbol)
-    unicornhat.set_pixel(0,7,chargesymbol,0,chargesymbol)
-    unicornhat.set_pixel(1,5,chargesymbol,0,chargesymbol)
-    unicornhat.set_pixel(1,7,chargesymbol,0,chargesymbol)
-
-    unicornhat.show()
-    time.sleep(10)          # Sleep most of the time
+    unicornhat.set_pixel(1,0,chargesymbol,0,0)
+    unicornhat.set_pixel(0,1,chargesymbol,0,0)
+    unicornhat.set_pixel(1,1,chargesymbol,0,0)
+    unicornhat.set_pixel(2,1,chargesymbol,0,0)
+    unicornhat.set_pixel(1,2,chargesymbol,0,0)
+        
+    for y in range(0,10):
+        p = subprocess.Popen(["xset q | grep LED"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        answer, err = p.communicate()
+        str1=str(answer)
+        if str1[67:68]=='1':
+            capsymbol=255
+        else:
+            capsymbol=0
+        unicornhat.set_pixel(0,5,capsymbol,capsymbol,capsymbol)
+        unicornhat.set_pixel(0,6,capsymbol,capsymbol,capsymbol)
+        unicornhat.set_pixel(0,7,capsymbol,capsymbol,capsymbol)
+        unicornhat.set_pixel(1,5,capsymbol,capsymbol,capsymbol)
+        unicornhat.set_pixel(1,7,capsymbol,capsymbol,capsymbol)
+        unicornhat.show()
+        time.sleep(0.5)          # Sleep most of the time
