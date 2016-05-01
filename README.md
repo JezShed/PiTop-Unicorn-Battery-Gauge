@@ -18,6 +18,7 @@ Installation steps:
 6. Restart your Pi-Top.
 
 Notes:
+
 1. The charge status is sampled every 5 seconds.
 
 2. The CAPS LOCK status is sampled every 0.5 seconds.
