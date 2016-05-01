@@ -5,7 +5,7 @@
 ## Hat by calling 'pt-battery' and capturing its output.##
 ## Also displays CAPS-LOCK status                       ##
 ## Example by Jez - @JezShed                            ##
-## Version 1.2, 1st May 2016                            ##
+## Version 1.3, 1st May 2016                            ##
 ##########################################################
 
 import unicornhat, time, subprocess
@@ -138,6 +138,11 @@ while True:
     bat=chargecapacity(batterystatus)
     if bat!=-1:
         showcapacity(bat,startanim)
+    elif startanim == 1:
+        showcapacity(100,startanim) # Shows 100% on startup if pt-battery
+                                    # returns error (which it does when
+                                    # fully charged and plugged in.
+            
     startanim=0
     
     # Display little "+" symbol if we are charging
