@@ -1,5 +1,5 @@
 # PiTop-Unicorn-Battery-Gauge
-Battery gauge for the Pi-Top using the Pimoroni Unicorn Hat
+Battery gauge (and CAPS LOCK status) for the Pi-Top using the Pimoroni Unicorn Hat
 
 Please note, this is ONLY for the Pi-Top with a Pimoroni Unicorn Hat.
 
@@ -16,3 +16,7 @@ Installation steps:
 5. Press CTRL-X to exit and then press Y to accept the save.
 
 6. Restart your Pi-Top.
+
+Notes:
+1. The charge status is sampled every 5 seconds.
+2. The CAPS LOCK status is sampled every 0.5 seconds.
