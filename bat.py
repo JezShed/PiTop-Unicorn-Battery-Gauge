@@ -3,13 +3,135 @@
 ##########################################################
 ## pi-top Battery level gauge using Pimoroni's Unicorn  ##
 ## Hat by calling 'pt-battery' and capturing its output.##
-## Also displays CAPS-LOCK status                       ##
+## Also displays CAPS-LOCK status.                      ##
+## Now starts a shutdown sequence if battery < 5%       ##
 ## Example by Jez - @JezShed                            ##
-## Version 1.3, 1st May 2016                            ##
+## Version 1.4, 22nd June 2016                          ##
 ##########################################################
 
-import unicornhat, time, subprocess
+import unicornhat, time, subprocess, sys
 
+
+def plotnum(num):
+    if num==9:
+        bitmap=[
+            "........",
+            "....###.",
+            "...#...#",
+            "...#...#",
+            "....####",
+            ".......#",
+            ".......#",
+            "....###."]
+    if num==8:
+        bitmap=[
+            "........",
+            "....###.",
+            "...#...#",
+            "...#...#",
+            "....###.",
+            "...#...#",
+            "...#...#",
+            "....###."]
+    if num==7:
+        bitmap=[
+            "........",
+            "...#####",
+            ".......#",
+            ".......#",
+            "......#.",
+            "......#.",
+            ".....#..",
+            ".....#.."]
+    if num==6:
+        bitmap=[
+            "........",
+            "....###.",
+            "...#....",
+            "...#....",
+            "...####.",
+            "...#...#",
+            "...#...#",
+            "....###."]
+    if num==5:
+        bitmap=[
+            "........",
+            "...#####",
+            "...#....",
+            "...#....",
+            "....###.",
+            ".......#",
+            ".......#",
+            "...####."]
+    if num==4:
+        bitmap=[
+            "........",
+            "......#.",
+            ".....##.",
+            "....#.#.",
+            "...#..#.",
+            "...#####",
+            "......#.",
+            "......#."]
+    if num==3:
+        bitmap=[
+            "........",
+            "...#####",
+            "......#.",
+            ".....#..",
+            "....###.",
+            ".......#",
+            ".......#",
+            "...####."]
+    if num==2:
+        bitmap=[
+            "........",
+            "....###.",
+            "...#...#",
+            ".......#",
+            "......#.",
+            ".....#..",
+            "....#...",
+            "...#####"]
+    if num==1:
+        bitmap=[
+            "........",
+            ".....#..",
+            "....##..",
+            "...#.#..",
+            ".....#..",
+            ".....#..",
+            ".....#..",
+            "...#####"]
+    if num==0:
+        bitmap=[
+            "........",
+            "....###.",
+            "...#...#",
+            "...#...#",
+            "...#...#",
+            "...#...#",
+            "...#...#",
+            "....###.",
+            "........"]
+
+    for y in range(0, 8):
+        for x in range(0, 8):
+            if bitmap[y][x]=="#":
+                unicornhat.set_pixel(x,y,255,255,255)
+            else:
+                unicornhat.set_pixel(x,y,0,0,0)
+    unicornhat.show()
+
+    time.sleep(0.1)
+
+    for y in range(0, 8):
+        for x in range(0, 8):
+            if bitmap[y][x]=="#":
+                unicornhat.set_pixel(x,y,255,0,0)
+            else:
+                unicornhat.set_pixel(x,y,0,0,0)
+    unicornhat.show()
 
 def drawbattery():    #Draw the naked battery
     for n in range(1, 8):
@@ -30,13 +152,17 @@ def getbatterystatus():
 
 def chargecapacity(batterystatus):
     # Now search the returned string for the capacity figure
+    #print(batterystatus)
     bat=-1 # Rogue value of -1 if no usable response from pt-battery
     str1=str(batterystatus)
     str2="Capacity" # Search for this word
     position=str1.find(str2)+9
     capacity=(str1[position:position+4])
+    #print('*',capacity,'*',sep="")
     if capacity[3]=="%":
         capacity=capacity[0:3]
+    elif capacity[2]=="%":
+        capacity=capacity[0:2]
     try:
         bat=int(capacity)
     except ValueError:
@@ -122,15 +248,32 @@ def showcapslock(led):
     unicornhat.set_pixel(1,7,r,g,b)
 
 
+def shutdownsequence():
+    unicornhat.clear()
+    for n in range(9,-1,-1):
+        plotnum(n)
+        time.sleep(2)
+        batterystatus=str(getbatterystatus())
+        if batterystatus.find("Charging")>0: # Back on charge?
+            unicornhat.clear()  # Clear the display
+            drawbattery()   # Draw the battery
+            unicornhat.show()
+            return()        # Carry on
+#    subprocess.call("sudo shutdown -h now")  # Issue shutdown command
+    p = subprocess.Popen(["sudo shutdown -h now"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    sys.exit(0)             # Quit this program
+    
+
 ##############################
 ## Main program starts here ##
 ##############################
 unicornhat.rotation(0)
 unicornhat.clear()          # Clear the display
-unicornhat.brightness(0.5)  # Globalunicorn brightness
+unicornhat.brightness(0.5)  # Global unicorn brightness
 drawbattery()               # Draw the battery
 unicornhat.show()
 time.sleep(0.5)
+shutdownlevel=5             # Battery level that will trigger a shutdown
 startanim=1                 # Start-up anim only on the first run
 while True:
     batterystatus=str(getbatterystatus())
@@ -147,6 +290,10 @@ while True:
     
     # Display little "+" symbol if we are charging
     showchargesymbol(batterystatus)
+
+    if batterystatus.find("Discharging")>0:
+        if bat<=shutdownlevel and bat!=-1:
+            shutdownsequence()      # Shutdown gracefully
 
     # Checks CAPS LOCK 10 times (once every 0.5 Secs) then carries on
     for y in range(0,10):
