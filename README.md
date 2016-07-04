@@ -12,18 +12,20 @@ If the charger is plugged in during the countdown then the countdown is automati
 **Installation steps:**
 
 1. If you haven't done so already, make sure you've installed the [Pimoroni Unicorn Hat libraries for Python](https://github.com/pimoroni/unicorn-hat).
-
-2. Copy 'bat.py' file to a suitable location, such as '/home/pi/Pimoroni/unicornhat'.
- 
-3. To make sure the program starts everytime the desktop appears, open a console and type:
+2. Please note that the Pimoroni Unicorn Hat actually uses the PWM module to generate the data stream that is fed into the chain of 64 LEDs. The PWM module is normally used to generate the analogue audio (from the 3.5mm jack). The analogue audio must be disabled for the Unicorn hat to work (especially on later releases of Rasbian). This is done by editing the /boot/config.txt file by typing:
+`sudo nano /boot/config.txt`
+Then make sure these lines are uncommented:
+`hdmi_force_hotplug=1`
+`hdmi_force_edid_audio=1`
+Press CTRL-X to exit and then press Y to accept the save.
+(Thank you to [@gadgetoid] for this tip)
+3. Copy 'bat.py' file to a suitable location, such as '/home/pi/Pimoroni/unicornhat'.
+4. To make sure the program starts everytime the desktop appears, open a console and type:
 `sudo nano /etc/profile`.
-
-4. Scroll to the bottom of the file and add the line:
+Scroll to the bottom of the file and add the line:
 `sudo python3 /home/pi/Pimoroni/unicornhat/bat.py &`.
-
-5. Press CTRL-X to exit and then press Y to accept the save.
-
-6. Restart your Pi-Top.
+Press CTRL-X to exit and then press Y to accept the save.
+5. Restart your Pi-Top.
 
 **Notes:**
 
